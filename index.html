@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ETL Exercise</title>
+</head>
+<body>
+  <h1>Siegfred Noel M. Ungui</h1>
+  <h3><i>IT 3206N MW 12:30-3:00 PM</i></h3>
+  <br>
+
+  <h1>ETL Exercise</h1>
+
+  <h2>1. Upload Source CSV Files</h2>
+  <form id="etlForm">
+    <p>Student Information System (SIS):</p>
+    <p><input type="file" id="SIS" accept=".csv" required></p>
+    <p>Learning Management System (LMS):</p>
+    <p><input type="file" id="LMS" accept=".csv" required></p>
+    <p>Accounting System:</p>
+    <p><input type="file" id="Accounting" accept=".csv" required></p>
+    <p><button type="submit">RUN ETL</button></p>
+  </form>
+  <p id="message" style="color: brown;"></p>
+
+  <h2>2. JSON Output</h2>
+  <pre id="output"></pre>
+
+  <script src="etl.js"></script>
+  <script>
+    document.getElementById('etlForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const message = document.getElementById('message');
+      const output = document.getElementById('output');
+      output.textContent = '';
+      try {
+        // Read the 3 chosen files as text (all processing happens in the browser).
+        const files = {};
+        for (const name of ['SIS', 'LMS', 'Accounting']) {
+          files[name] = await document.getElementById(name).files[0].text();
+        }
+        const records = runEtl(files);
+        output.textContent = JSON.stringify(records, null, 4);
+        message.textContent = 'ETL completed successfully.';
+      } catch (err) {
+        message.textContent = 'ETL failed: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
